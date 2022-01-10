@@ -234,11 +234,67 @@ func getEmbeddedThumbnail(in io.Reader) ([]byte, io.Reader, error) {
 		return nil, wrappedReader, err
 	}
 
-	ifd := index.RootIfd.NextIfd()
+	rootIfd := index.RootIfd
+
+	ifd := rootIfd.NextIfd()
 	if ifd == nil {
 		return nil, wrappedReader, exif.ErrNoThumbnail
 	}
 
 	thm, err := ifd.Thumbnail()
-	return thm, wrappedReader, err
+	if err != nil {
+		return nil, wrappedReader, err
+	}
+
+	// We know the tag we want is on IFD0 (the first/root IFD).
+	results, err := rootIfd.FindTagWithName("Orientation")
+	if err != nil {
+		return thm, wrappedReader, err
+	}
+
+	// This should never happen.
+	if len(results) != 1 {
+		return thm, wrappedReader, err
+	}
+
+	ite := results[0]
+
+	valueRaw, err := ite.Value()
+	if err != nil {
+		return thm, wrappedReader, err
+	}
+
+	value := valueRaw.([]uint16)
+
+	if len(value) != 1 || value[0] == 0 || value[0] == 1 {
+		return thm, wrappedReader, err
+	}
+
+	thmBuf := &bytes.Buffer{}
+	_, err = thmBuf.Write(thm)
+	if err != nil {
+		return thm, wrappedReader, err
+	}
+
+	img, err := imaging.Decode(thmBuf, imaging.AutoOrientation(false))
+	if err != nil {
+		return thm, wrappedReader, err
+	}
+
+	switch value[0] {
+	case 3:
+		img = imaging.Rotate180(img)
+	case 6:
+		img = imaging.Rotate270(img)
+	case 8:
+		img = imaging.Rotate90(img)
+	}
+
+	thmBuf.Reset()
+	err = imaging.Encode(thmBuf, img, imaging.JPEG)
+	if err != nil {
+		return thm, wrappedReader, err
+	}
+
+	return thmBuf.Bytes(), wrappedReader, err
 }
