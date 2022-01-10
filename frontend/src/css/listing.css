@@ -54,8 +54,8 @@
 }
 
 #listing .item img {
-  width: 4em;
-  height: 4em;
+  width: 8em;
+  height: 8em;
   object-fit: cover;
   margin-right: 0.1em;
   vertical-align: bottom;
@@ -99,7 +99,7 @@
 }
 
 #listing.mosaic .item div:first-of-type {
-  width: 5em;
+  width: 11em;
 }
 
 #listing.mosaic .item div:last-of-type {
