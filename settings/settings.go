@@ -2,25 +2,31 @@ package settings
 
 import (
 	"crypto/rand"
+	"log"
 	"strings"
+	"time"
 
 	"github.com/filebrowser/filebrowser/v2/rules"
 )
+
+const DefaultUsersHomeBasePath = "/users"
 
 // AuthMethod describes an authentication method.
 type AuthMethod string
 
 // Settings contain the main settings of the application.
 type Settings struct {
-	Key           []byte              `json:"key"`
-	Signup        bool                `json:"signup"`
-	CreateUserDir bool                `json:"createUserDir"`
-	Defaults      UserDefaults        `json:"defaults"`
-	AuthMethod    AuthMethod          `json:"authMethod"`
-	Branding      Branding            `json:"branding"`
-	Commands      map[string][]string `json:"commands"`
-	Shell         []string            `json:"shell"`
-	Rules         []rules.Rule        `json:"rules"`
+	Key              []byte              `json:"key"`
+	Signup           bool                `json:"signup"`
+	CreateUserDir    bool                `json:"createUserDir"`
+	UserHomeBasePath string              `json:"userHomeBasePath"`
+	Defaults         UserDefaults        `json:"defaults"`
+	AuthMethod       AuthMethod          `json:"authMethod"`
+	Branding         Branding            `json:"branding"`
+	Tus              Tus                 `json:"tus"`
+	Commands         map[string][]string `json:"commands"`
+	Shell            []string            `json:"shell"`
+	Rules            []rules.Rule        `json:"rules"`
 }
 
 // GetRules implements rules.Provider.
@@ -42,11 +48,26 @@ type Server struct {
 	ResizePreview         bool   `json:"resizePreview"`
 	EnableExec            bool   `json:"enableExec"`
 	TypeDetectionByHeader bool   `json:"typeDetectionByHeader"`
+	AuthHook              string `json:"authHook"`
+	TokenExpirationTime   string `json:"tokenExpirationTime"`
 }
 
 // Clean cleans any variables that might need cleaning.
 func (s *Server) Clean() {
 	s.BaseURL = strings.TrimSuffix(s.BaseURL, "/")
+}
+
+func (s *Server) GetTokenExpirationTime(fallback time.Duration) time.Duration {
+	if s.TokenExpirationTime == "" {
+		return fallback
+	}
+
+	duration, err := time.ParseDuration(s.TokenExpirationTime)
+	if err != nil {
+		log.Printf("[WARN] Failed to parse tokenExpirationTime: %v", err)
+		return fallback
+	}
+	return duration
 }
 
 // GenerateKey generates a key of 512 bits.

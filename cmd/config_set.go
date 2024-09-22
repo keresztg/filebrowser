@@ -16,7 +16,7 @@ var configSetCmd = &cobra.Command{
 	Long: `Updates the configuration. Set the flags for the options
 you want to change. Other options will remain unchanged.`,
 	Args: cobra.NoArgs,
-	Run: python(func(cmd *cobra.Command, args []string, d pythonData) {
+	Run: python(func(cmd *cobra.Command, _ []string, d pythonData) {
 		flags := cmd.Flags()
 		set, err := d.store.Settings.Get()
 		checkErr(err)
@@ -49,12 +49,18 @@ you want to change. Other options will remain unchanged.`,
 				hasAuth = true
 			case "shell":
 				set.Shell = convertCmdStrToCmdArray(mustGetString(flags, flag.Name))
+			case "create-user-dir":
+				set.CreateUserDir = mustGetBool(flags, flag.Name)
 			case "branding.name":
 				set.Branding.Name = mustGetString(flags, flag.Name)
 			case "branding.color":
 				set.Branding.Color = mustGetString(flags, flag.Name)
+			case "branding.theme":
+				set.Branding.Theme = mustGetString(flags, flag.Name)
 			case "branding.disableExternal":
 				set.Branding.DisableExternal = mustGetBool(flags, flag.Name)
+			case "branding.disableUsedPercentage":
+				set.Branding.DisableUsedPercentage = mustGetBool(flags, flag.Name)
 			case "branding.files":
 				set.Branding.Files = mustGetString(flags, flag.Name)
 			}

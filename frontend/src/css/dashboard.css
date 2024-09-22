@@ -4,13 +4,17 @@
 
 .dashboard .row {
   display: flex;
-  margin: 0 -.5em;
+  margin: 0 -0.5em;
   flex-wrap: wrap;
+}
+
+html[dir="rtl"] .dashboard .row {
+  margin-right: 16em;
 }
 
 .dashboard .row .column {
   display: flex;
-  padding: 0 .5em;
+  padding: 0 0.5em;
   width: 50%;
 }
 
@@ -18,33 +22,33 @@
   flex-grow: 1;
 }
 
-@media(max-width: 1200px) {
+@media (max-width: 1200px) {
   .dashboard .row .column {
     width: 100%;
   }
 }
 
 a {
-  color: inherit
+  color: inherit;
 }
 
 .dashboard p label {
-  margin-bottom: .2em;
+  margin-bottom: 0.2em;
   display: block;
-  font-size: .8em;
+  font-size: 0.8em;
   font-weight: 500;
-  color: rgba(0, 0, 0, 0.57);
+  color: var(--textPrimary);
 }
 
 li code,
 p code {
-  background: rgba(0, 0, 0, 0.05);
-  padding: .1em;
-  border-radius: .2em;
+  background: var(--divider);
+  padding: 0.1em;
+  border-radius: 0.2em;
 }
 
 .small {
-  font-size: .8em;
+  font-size: 0.8em;
   line-height: 1.5;
 }
 
@@ -57,17 +61,21 @@ p code {
 .dashboard #nav .wrapper {
   display: flex;
   flex-grow: 1;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 2px solid var(--divider);
+}
+
+html[dir="rtl"] .dashboard #nav .wrapper {
+  margin-right: 16em;
 }
 
 .dashboard #nav ul {
   list-style: none;
   display: flex;
-  color: rgb(84, 110, 122);
+  color: var(--action);
   font-weight: 500;
   padding: 0;
   margin: 0 0 -2px 0;
-  font-size: .8em;
+  font-size: 0.8em;
   text-align: center;
   justify-content: left;
 }
@@ -77,12 +85,11 @@ p code {
   padding: 1.5em 2em;
   white-space: nowrap;
   border-bottom: 2px solid transparent;
-  transition: .1s ease-in-out all;
-
+  transition: 0.1s ease-in-out all;
 }
 
 .dashboard #nav ul li:hover {
-  background: var(--moon-grey);
+  background: var(--surfaceSecondary);
 }
 
 .dashboard #nav ul li.active {
@@ -112,7 +119,7 @@ table {
 }
 
 table tr {
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid var(--iconTertiary);
 }
 
 table tr:last-child {
@@ -121,33 +128,44 @@ table tr:last-child {
 
 table th {
   font-weight: 500;
-  color: #757575;
+  color: var(--textSecondary);
   text-align: left;
 }
 
 table th,
 table td {
-  padding: .5em 0;
+  padding: 0.5em 0;
 }
 
 table td.small {
   width: 1em;
 }
 
-table tr>*:first-child {
+table tr > *:first-child {
   padding-left: 1em;
 }
 
-table tr>*:last-child {
+html[dir="rtl"] table tr > * {
+  padding-left: unset;
+  padding-right: 1em;
+  text-align: right;
+  direction: ltr;
+}
+
+table tr > *:last-child {
   padding-right: 1em;
 }
 
 .card {
   position: relative;
   margin: 0 0 1rem 0;
-  background-color: #fff;
+  background: var(--surfacePrimary);
+  color: var(--textSecondary);
   border-radius: 2px;
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+  box-shadow:
+    0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 1px 5px 0 rgba(0, 0, 0, 0.12),
+    0 3px 1px -2px rgba(0, 0, 0, 0.2);
   overflow: auto;
 }
 
@@ -156,19 +174,18 @@ table tr>*:last-child {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 99999;
   max-width: 25em;
   width: 90%;
   max-height: 95%;
-  z-index: 99999;
-  animation: .1s show forwards;
+  /* animation-duration: 0.3s;
+  animation-fill-mode: forwards; */
 }
 
-.card>*>*:first-child {
+.card > * > *:first-child {
   margin-top: 0;
 }
 
-.card>*>*:last-child {
+.card > * > *:last-child {
   margin-bottom: 0;
 }
 
@@ -177,19 +194,24 @@ table tr>*:last-child {
   display: flex;
 }
 
-.card .card-title>*:first-child {
+.card .card-title > *:first-child {
   margin-right: auto;
 }
 
-.card>div {
+html[dir="rtl"] .card .card-title > *:first-child {
+  margin-right: 0;
+  text-align: right;
+}
+
+.card > div {
   padding: 1em 1em;
 }
 
-.card>div:first-child {
+.card > div:first-child {
   padding-top: 1.5em;
 }
 
-.card>div:last-child {
+.card > div:last-child {
   padding-bottom: 1.5em;
 }
 
@@ -199,6 +221,10 @@ table tr>*:last-child {
 
 .card .card-action {
   text-align: right;
+}
+
+body.rtl .card .card-action {
+  text-align: left;
 }
 
 .card .card-content.full {
@@ -211,7 +237,7 @@ table tr>*:last-child {
 }
 
 .card h3 {
-  color: rgba(0, 0, 0, 0.53);
+  color: var(--textPrimary);
   font-size: 1em;
   font-weight: 500;
   margin: 2em 0 1em;
@@ -228,6 +254,14 @@ table tr>*:last-child {
 
 .card#download {
   max-width: 15em;
+}
+
+.card#share input,
+.card#share select,
+.card#share input::-webkit-inner-spin-button,
+.card#share input::-webkit-outer-spin-button {
+  background: var(--surfacePrimary);
+  color: var(--textSecondary);
 }
 
 .card#share ul {
@@ -254,24 +288,24 @@ table tr>*:last-child {
 
 .card#share ul li input,
 .card#share ul li select {
-  padding: .2em;
-  margin-right: .5em;
-  border: 1px solid #dadada;
+  padding: 0.2em;
+  margin-right: 0.5em;
+  border: 1px solid var(--borderPrimary);
 }
 
 .card#share .action.copy-clipboard::after {
-  content: 'Copied!';
+  content: "Copied!";
   position: absolute;
   left: -25%;
   width: 150%;
-  font-size: .6em;
+  font-size: 0.6em;
   text-align: center;
   background: #44a6f5;
   color: #fff;
-  padding: .5em .2em;
-  border-radius: .4em;
+  padding: 0.5em 0.2em;
+  border-radius: 0.4em;
   top: -2em;
-  transition: .1s ease opacity;
+  transition: 0.1s ease opacity;
   opacity: 0;
 }
 
@@ -299,9 +333,10 @@ table tr>*:last-child {
   height: 100%;
   width: 100%;
   z-index: 9999;
-  animation: .1s show forwards;
+  visibility: hidden;
+  opacity: 0;
+  animation: 0.1s show forwards;
 }
-
 
 /* * * * * * * * * * * * * * * *
  *        PROMPT - MOVE        *
@@ -319,33 +354,33 @@ table tr>*:last-child {
 .file-list li {
   width: 100%;
   user-select: none;
-  border-radius: .2em;
-  padding: .3em;
+  border-radius: 0.2em;
+  padding: 0.3em;
 }
 
-.file-list li[aria-selected=true] {
+.file-list li[aria-selected="true"] {
   background: var(--blue) !important;
-  color: #fff !important;
-  transition: .1s ease all;
+  color: var(--iconSecondary) !important;
+  transition: 0.1s ease all;
 }
 
 .file-list li:hover {
-  background-color: #e9eaeb;
+  background: var(--surfaceSecondary);
   cursor: pointer;
 }
 
 .file-list li:before {
   content: "folder";
-  color: #6f6f6f;
+  color: var(--textPrimary);
   vertical-align: middle;
   line-height: 1.4;
-  font-family: 'Material Icons';
+  font-family: "Material Icons";
   font-size: 1.75em;
-  margin-right: .25em;
+  margin-right: 0.25em;
 }
 
-.file-list li[aria-selected=true]:before {
-  color: white;
+.file-list li[aria-selected="true"]:before {
+  color: var(--iconSecondary);
 }
 
 .help {
@@ -360,25 +395,25 @@ table tr>*:last-child {
 
 @keyframes show {
   0% {
-    display: none;
+    visibility: hidden;
     opacity: 0;
   }
   1% {
-    display: block;
+    visibility: visible;
     opacity: 0;
   }
   100% {
-    display: block;
+    visibility: visible;
     opacity: 1;
   }
 }
 
 .collapsible {
-  border-top: 1px solid rgba(0,0,0,0.1);
+  border-top: 1px solid var(--borderPrimary);
 }
 
 .collapsible:last-of-type {
-  border-bottom: 1px solid rgba(0,0,0,0.1);
+  border-bottom: 1px solid var(--borderPrimary);
 }
 
 .collapsible > input {
@@ -396,18 +431,18 @@ table tr>*:last-child {
 
 .collapsible > label * {
   margin: 0;
-  color: rgba(0,0,0,0.57);
+  color: var(--textPrimary);
 }
 
 .collapsible > label i {
-  transition: .2s ease transform;
+  transition: 0.2s ease transform;
   user-select: none;
 }
 
 .collapsible .collapse {
   max-height: 0;
   overflow: hidden;
-  transition: .2s ease all;
+  transition: 0.2s ease all;
 }
 
 .collapsible > input:checked ~ .collapse {
@@ -417,7 +452,7 @@ table tr>*:last-child {
 }
 
 .collapsible > input:checked ~ label i {
-  transform: rotate(180deg)
+  transform: rotate(180deg);
 }
 
 .card .collapsible {
@@ -443,12 +478,12 @@ table tr>*:last-child {
   flex: 1;
   padding: 2em;
   border-radius: 0.2em;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--borderPrimary);
   text-align: center;
 }
 
 .card .card-action.full .action {
-  margin: 0 0.25em 0.50em;
+  margin: 0 0.25em 0.5em;
 }
 
 .card .card-action.full .action i {
@@ -461,4 +496,10 @@ table tr>*:last-child {
 .card .card-action.full .action .title {
   font-size: 1.5em;
   font-weight: 500;
+}
+
+/*** RTL - Fix disk usage information (in english) ***/
+html[dir="rtl"] .credits {
+  text-align: right;
+  direction: ltr;
 }

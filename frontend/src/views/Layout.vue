@@ -1,46 +1,46 @@
 <template>
   <div>
-    <div v-if="progress" class="progress">
-      <div v-bind:style="{ width: this.progress + '%' }"></div>
+    <div v-if="uploadStore.getProgress" class="progress">
+      <div v-bind:style="{ width: uploadStore.getProgress + '%' }"></div>
     </div>
     <sidebar></sidebar>
     <main>
       <router-view></router-view>
-      <shell v-if="isExecEnabled && isLogged && user.perm.execute" />
+      <shell
+        v-if="
+          enableExec && authStore.isLoggedIn && authStore.user?.perm.execute
+        "
+      />
     </main>
     <prompts></prompts>
     <upload-files></upload-files>
   </div>
 </template>
 
-<script>
-import { mapState, mapGetters } from "vuex";
-import Sidebar from "@/components/Sidebar";
-import Prompts from "@/components/prompts/Prompts";
-import Shell from "@/components/Shell";
-import UploadFiles from "../components/prompts/UploadFiles";
+<script setup lang="ts">
+import { useAuthStore } from "@/stores/auth";
+import { useLayoutStore } from "@/stores/layout";
+import { useFileStore } from "@/stores/file";
+import { useUploadStore } from "@/stores/upload";
+import Sidebar from "@/components/Sidebar.vue";
+import Prompts from "@/components/prompts/Prompts.vue";
+import Shell from "@/components/Shell.vue";
+import UploadFiles from "@/components/prompts/UploadFiles.vue";
 import { enableExec } from "@/utils/constants";
+import { watch } from "vue";
+import { useRoute } from "vue-router";
 
-export default {
-  name: "layout",
-  components: {
-    Sidebar,
-    Prompts,
-    Shell,
-    UploadFiles,
-  },
-  computed: {
-    ...mapGetters(["isLogged", "progress"]),
-    ...mapState(["user"]),
-    isExecEnabled: () => enableExec,
-  },
-  watch: {
-    $route: function () {
-      this.$store.commit("resetSelected");
-      this.$store.commit("multiple", false);
-      if (this.$store.state.show !== "success")
-        this.$store.commit("closeHovers");
-    },
-  },
-};
+const layoutStore = useLayoutStore();
+const authStore = useAuthStore();
+const fileStore = useFileStore();
+const uploadStore = useUploadStore();
+const route = useRoute();
+
+watch(route, () => {
+  fileStore.selected = [];
+  fileStore.multiple = false;
+  if (layoutStore.currentPromptName !== "success") {
+    layoutStore.closeHovers();
+  }
+});
 </script>

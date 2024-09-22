@@ -4,15 +4,24 @@
 
     <h2 class="message">
       <i class="material-icons">{{ info.icon }}</i>
-      <span>{{ $t(info.message) }}</span>
+      <span>{{ t(info.message) }}</span>
     </h2>
   </div>
 </template>
 
-<script>
-import HeaderBar from "@/components/header/HeaderBar";
+<script setup lang="ts">
+import HeaderBar from "@/components/header/HeaderBar.vue";
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 
-const errors = {
+const { t } = useI18n({});
+
+const errors: {
+  [key: number]: {
+    icon: string;
+    message: string;
+  };
+} = {
   0: {
     icon: "cloud_off",
     message: "errors.connection",
@@ -31,23 +40,18 @@ const errors = {
   },
 };
 
-export default {
-  name: "errors",
-  components: {
-    HeaderBar,
-  },
-  props: ["errorCode", "showHeader"],
-  computed: {
-    code() {
-      return this.errorCode === "0" ||
-        this.errorCode === "404" ||
-        this.errorCode === "403"
-        ? parseInt(this.errorCode)
-        : 500;
-    },
-    info() {
-      return errors[this.code];
-    },
-  },
-};
+const props = withDefaults(
+  defineProps<{
+    errorCode?: number;
+    showHeader?: boolean;
+  }>(),
+  {
+    errorCode: 500,
+    showHeader: false,
+  }
+);
+
+const info = computed(() => {
+  return errors[props.errorCode] ? errors[props.errorCode] : errors[500];
+});
 </script>

@@ -5,18 +5,21 @@
     </div>
     <div class="card-action">
       <button
-        @click="$store.commit('closeHovers')"
+        @click="closeHovers"
         class="button button--flat button--grey"
         :aria-label="$t('buttons.cancel')"
         :title="$t('buttons.cancel')"
+        tabindex="2"
       >
         {{ $t("buttons.cancel") }}
       </button>
       <button
+        id="focus-prompt"
         @click="submit"
         class="button button--flat button--red"
         :aria-label="$t('buttons.delete')"
         :title="$t('buttons.delete')"
+        tabindex="1"
       >
         {{ $t("buttons.delete") }}
       </button>
@@ -25,16 +28,18 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapActions, mapState } from "pinia";
+import { useLayoutStore } from "@/stores/layout";
 
 export default {
   name: "share-delete",
   computed: {
-    ...mapState(["showConfirm"]),
+    ...mapState(useLayoutStore, ["currentPrompt"]),
   },
   methods: {
+    ...mapActions(useLayoutStore, ["closeHovers"]),
     submit: function () {
-      this.showConfirm();
+      this.currentPrompt?.confirm();
     },
   },
 };

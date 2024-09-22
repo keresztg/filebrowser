@@ -1,6 +1,7 @@
 {
   "buttons": {
     "cancel": "Annuleren",
+    "clear": "Wissen",
     "close": "Sluiten",
     "copy": "Kopiëren",
     "copyFile": "Bestand kopiëren",
@@ -46,7 +47,6 @@
   },
   "files": {
     "body": "Body",
-    "clear": "Wissen",
     "closePreview": "Voorvertoon sluiten",
     "files": "Bestanden",
     "folders": "Mappen",
@@ -75,29 +75,6 @@
     "f1": "deze informatie",
     "f2": "bestand herbenoemen",
     "help": "Help"
-  },
-  "languages": {
-    "ar": "Arabisch",
-    "de": "Duits",
-    "en": "Engels",
-    "es": "Spaans",
-    "fr": "Frans",
-    "is": "",
-    "it": "Italiaans",
-    "ja": "Japans",
-    "ko": "Koreaans",
-    "nlBE": "",
-    "pl": "Pools",
-    "pt": "Portugees",
-    "ptBR": "Portugees (Brazilië)",
-    "ro": "",
-    "ru": "Russisch",
-    "sk": "Slovenčina",
-    "svSE": "",
-    "tr" : "Türkçe",
-    "ua": "Українська",
-    "zhCN": "Chinees (vereenvoudigd)",
-    "zhTW": "Chinees (traditioneel)"
   },
   "login": {
     "createAnAccount": "Account aanmaken",
@@ -176,6 +153,7 @@
     "customStylesheet": "Aangepast Stylesheet",
     "defaultUserDescription": "Dit zijn de standaardinstellingen voor nieuwe gebruikers.",
     "disableExternalLinks": "Schakel externe links uit (behalve documentatie)",
+    "disableUsedDiskPercentage": "Disable used disk percentage graph",
     "documentation": "Documentatie",
     "examples": "Voorbeelden",
     "executeOnShell": "Uitvoeren in de shell",

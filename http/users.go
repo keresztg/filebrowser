@@ -2,15 +2,17 @@ package http
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"sort"
 	"strconv"
-	"strings"
 
 	"github.com/gorilla/mux"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 
-	"github.com/filebrowser/filebrowser/v2/errors"
+	fbErrors "github.com/filebrowser/filebrowser/v2/errors"
 	"github.com/filebrowser/filebrowser/v2/users"
 )
 
@@ -25,7 +27,7 @@ type modifyUserRequest struct {
 
 func getUserID(r *http.Request) (uint, error) {
 	vars := mux.Vars(r)
-	i, err := strconv.ParseUint(vars["id"], 10, 0) //nolint:gomnd
+	i, err := strconv.ParseUint(vars["id"], 10, 0)
 	if err != nil {
 		return 0, err
 	}
@@ -34,7 +36,7 @@ func getUserID(r *http.Request) (uint, error) {
 
 func getUser(_ http.ResponseWriter, r *http.Request) (*modifyUserRequest, error) {
 	if r.Body == nil {
-		return nil, errors.ErrEmptyRequest
+		return nil, fbErrors.ErrEmptyRequest
 	}
 
 	req := &modifyUserRequest{}
@@ -44,7 +46,7 @@ func getUser(_ http.ResponseWriter, r *http.Request) (*modifyUserRequest, error)
 	}
 
 	if req.What != "user" {
-		return nil, errors.ErrInvalidDataType
+		return nil, fbErrors.ErrInvalidDataType
 	}
 
 	return req, nil
@@ -85,7 +87,7 @@ var usersGetHandler = withAdmin(func(w http.ResponseWriter, r *http.Request, d *
 
 var userGetHandler = withSelfOrAdmin(func(w http.ResponseWriter, r *http.Request, d *data) (int, error) {
 	u, err := d.store.Users.Get(d.server.Root, d.raw.(uint))
-	if err == errors.ErrNotExist {
+	if errors.Is(err, fbErrors.ErrNotExist) {
 		return http.StatusNotFound, err
 	}
 
@@ -100,7 +102,7 @@ var userGetHandler = withSelfOrAdmin(func(w http.ResponseWriter, r *http.Request
 	return renderJSON(w, r, u)
 })
 
-var userDeleteHandler = withSelfOrAdmin(func(w http.ResponseWriter, r *http.Request, d *data) (int, error) {
+var userDeleteHandler = withSelfOrAdmin(func(_ http.ResponseWriter, _ *http.Request, d *data) (int, error) {
 	err := d.store.Users.Delete(d.raw.(uint))
 	if err != nil {
 		return errToStatus(err), err
@@ -120,7 +122,7 @@ var userPostHandler = withAdmin(func(w http.ResponseWriter, r *http.Request, d *
 	}
 
 	if req.Data.Password == "" {
-		return http.StatusBadRequest, errors.ErrEmptyPassword
+		return http.StatusBadRequest, fbErrors.ErrEmptyPassword
 	}
 
 	req.Data.Password, err = users.HashPwd(req.Data.Password)
@@ -141,7 +143,7 @@ var userPostHandler = withAdmin(func(w http.ResponseWriter, r *http.Request, d *
 		return http.StatusInternalServerError, err
 	}
 
-	w.Header().Set("Location", "/settings/users/"+strconv.FormatUint(uint64(req.Data.ID), 10)) //nolint:gomnd
+	w.Header().Set("Location", "/settings/users/"+strconv.FormatUint(uint64(req.Data.ID), 10))
 	return http.StatusCreated, nil
 })
 
@@ -176,7 +178,7 @@ var userPutHandler = withSelfOrAdmin(func(w http.ResponseWriter, r *http.Request
 	}
 
 	for k, v := range req.Which {
-		v = strings.Title(v)
+		v = cases.Title(language.English, cases.NoLower).String(v)
 		req.Which[k] = v
 
 		if v == "Password" {

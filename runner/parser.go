@@ -3,8 +3,6 @@ package runner
 import (
 	"os/exec"
 
-	"github.com/caddyserver/caddy"
-
 	"github.com/filebrowser/filebrowser/v2/settings"
 )
 
@@ -14,8 +12,8 @@ import (
 func ParseCommand(s *settings.Settings, raw string) ([]string, error) {
 	var command []string
 
-	if len(s.Shell) == 0 {
-		cmd, args, err := caddy.SplitCommandAndArgs(raw)
+	if len(s.Shell) == 0 || s.Shell[0] == "" {
+		cmd, args, err := SplitCommandAndArgs(raw)
 		if err != nil {
 			return nil, err
 		}

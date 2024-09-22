@@ -11,17 +11,29 @@
     <div class="card-action">
       <button
         class="button button--flat button--grey"
-        @click="$store.commit('closeHovers')"
+        @click="closeHovers"
         :aria-label="$t('buttons.cancel')"
         :title="$t('buttons.cancel')"
+        tabindex="3"
       >
         {{ $t("buttons.cancel") }}
       </button>
       <button
+        class="button button--flat button--blue"
+        @click="currentPrompt.action"
+        :aria-label="$t('buttons.continue')"
+        :title="$t('buttons.continue')"
+        tabindex="2"
+      >
+        {{ $t("buttons.continue") }}
+      </button>
+      <button
+        id="focus-prompt"
         class="button button--flat button--red"
-        @click="showConfirm"
+        @click="currentPrompt.confirm"
         :aria-label="$t('buttons.replace')"
         :title="$t('buttons.replace')"
+        tabindex="1"
       >
         {{ $t("buttons.replace") }}
       </button>
@@ -30,10 +42,16 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapActions, mapState } from "pinia";
+import { useLayoutStore } from "@/stores/layout";
 
 export default {
   name: "replace",
-  computed: mapState(["showConfirm"]),
+  computed: {
+    ...mapState(useLayoutStore, ["currentPrompt"]),
+  },
+  methods: {
+    ...mapActions(useLayoutStore, ["closeHovers"]),
+  },
 };
 </script>

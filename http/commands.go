@@ -27,7 +27,8 @@ var (
 	cmdNotAllowed = []byte("Command not allowed.")
 )
 
-func wsErr(ws *websocket.Conn, r *http.Request, status int, err error) { //nolint:unparam
+//nolint:unparam
+func wsErr(ws *websocket.Conn, r *http.Request, status int, err error) {
 	txt := http.StatusText(status)
 	if err != nil || status >= 400 {
 		log.Printf("%s: %v %s %v", r.URL.Path, status, r.RemoteAddr, err)

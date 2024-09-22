@@ -12,10 +12,17 @@
       <p class="break-word" v-if="selected.length < 2">
         <strong>{{ $t("prompts.displayName") }}</strong> {{ name }}
       </p>
+
       <p v-if="!dir || selected.length > 1">
         <strong>{{ $t("prompts.size") }}:</strong>
         <span id="content_length"></span> {{ humanSize }}
       </p>
+
+      <div v-if="resolution">
+        <strong>{{ $t("prompts.resolution") }}:</strong>
+        {{ resolution.width }} x {{ resolution.height }}
+      </div>
+
       <p v-if="selected.length < 2" :title="modTime">
         <strong>{{ $t("prompts.lastModified") }}:</strong> {{ humanTime }}
       </p>
@@ -33,33 +40,45 @@
         <p>
           <strong>MD5: </strong
           ><code
-            ><a @click="checksum($event, 'md5')">{{
-              $t("prompts.show")
-            }}</a></code
+            ><a
+              @click="checksum($event, 'md5')"
+              @keypress.enter="checksum($event, 'md5')"
+              tabindex="2"
+              >{{ $t("prompts.show") }}</a
+            ></code
           >
         </p>
         <p>
           <strong>SHA1: </strong
           ><code
-            ><a @click="checksum($event, 'sha1')">{{
-              $t("prompts.show")
-            }}</a></code
+            ><a
+              @click="checksum($event, 'sha1')"
+              @keypress.enter="checksum($event, 'sha1')"
+              tabindex="3"
+              >{{ $t("prompts.show") }}</a
+            ></code
           >
         </p>
         <p>
           <strong>SHA256: </strong
           ><code
-            ><a @click="checksum($event, 'sha256')">{{
-              $t("prompts.show")
-            }}</a></code
+            ><a
+              @click="checksum($event, 'sha256')"
+              @keypress.enter="checksum($event, 'sha256')"
+              tabindex="4"
+              >{{ $t("prompts.show") }}</a
+            ></code
           >
         </p>
         <p>
           <strong>SHA512: </strong
           ><code
-            ><a @click="checksum($event, 'sha512')">{{
-              $t("prompts.show")
-            }}</a></code
+            ><a
+              @click="checksum($event, 'sha512')"
+              @keypress.enter="checksum($event, 'sha512')"
+              tabindex="5"
+              >{{ $t("prompts.show") }}</a
+            ></code
           >
         </p>
       </template>
@@ -67,8 +86,9 @@
 
     <div class="card-action">
       <button
+        id="focus-prompt"
         type="submit"
-        @click="$store.commit('closeHovers')"
+        @click="closeHovers"
         class="button button--flat"
         :aria-label="$t('buttons.ok')"
         :title="$t('buttons.ok')"
@@ -80,16 +100,23 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
-import filesize from "filesize";
-import moment from "moment";
+import { mapActions, mapState } from "pinia";
+import { useFileStore } from "@/stores/file";
+import { useLayoutStore } from "@/stores/layout";
+import { filesize } from "@/utils";
+import dayjs from "dayjs";
 import { files as api } from "@/api";
 
 export default {
   name: "info",
+  inject: ["$showError"],
   computed: {
-    ...mapState(["req", "selected"]),
-    ...mapGetters(["selectedCount", "isListing"]),
+    ...mapState(useFileStore, [
+      "req",
+      "selected",
+      "selectedCount",
+      "isListing",
+    ]),
     humanSize: function () {
       if (this.selectedCount === 0 || !this.isListing) {
         return filesize(this.req.size);
@@ -105,13 +132,19 @@ export default {
     },
     humanTime: function () {
       if (this.selectedCount === 0) {
-        return moment(this.req.modified).fromNow();
+        return dayjs(this.req.modified).fromNow();
       }
 
-      return moment(this.req.items[this.selected[0]].modified).fromNow();
+      return dayjs(this.req.items[this.selected[0]].modified).fromNow();
     },
     modTime: function () {
-      return new Date(Date.parse(this.req.modified)).toLocaleString();
+      if (this.selectedCount === 0) {
+        return new Date(Date.parse(this.req.modified)).toLocaleString();
+      }
+
+      return new Date(
+        Date.parse(this.req.items[this.selected[0]].modified)
+      ).toLocaleString();
     },
     name: function () {
       return this.selectedCount === 0
@@ -126,8 +159,20 @@ export default {
           : this.req.items[this.selected[0]].isDir)
       );
     },
+    resolution: function () {
+      if (this.selectedCount === 1) {
+        const selectedItem = this.req.items[this.selected[0]];
+        if (selectedItem && selectedItem.type === "image") {
+          return selectedItem.resolution;
+        }
+      } else if (this.req && this.req.type === "image") {
+        return this.req.resolution;
+      }
+      return null;
+    },
   },
   methods: {
+    ...mapActions(useLayoutStore, ["closeHovers"]),
     checksum: async function (event, algo) {
       event.preventDefault();
 
@@ -141,8 +186,7 @@ export default {
 
       try {
         const hash = await api.checksum(link, algo);
-        // eslint-disable-next-line
-        event.target.innerHTML = hash
+        event.target.textContent = hash;
       } catch (e) {
         this.$showError(e);
       }

@@ -1,11 +1,13 @@
 package bolt
 
 import (
+	"errors"
+	"fmt"
 	"reflect"
 
-	"github.com/asdine/storm"
+	"github.com/asdine/storm/v3"
 
-	"github.com/filebrowser/filebrowser/v2/errors"
+	fbErrors "github.com/filebrowser/filebrowser/v2/errors"
 	"github.com/filebrowser/filebrowser/v2/users"
 )
 
@@ -23,14 +25,14 @@ func (st usersBackend) GetBy(i interface{}) (user *users.User, err error) {
 	case string:
 		arg = "Username"
 	default:
-		return nil, errors.ErrInvalidDataType
+		return nil, fbErrors.ErrInvalidDataType
 	}
 
 	err = st.db.One(arg, i, user)
 
 	if err != nil {
-		if err == storm.ErrNotFound {
-			return nil, errors.ErrNotExist
+		if errors.Is(err, storm.ErrNotFound) {
+			return nil, fbErrors.ErrNotExist
 		}
 		return nil, err
 	}
@@ -41,8 +43,8 @@ func (st usersBackend) GetBy(i interface{}) (user *users.User, err error) {
 func (st usersBackend) Gets() ([]*users.User, error) {
 	var allUsers []*users.User
 	err := st.db.All(&allUsers)
-	if err == storm.ErrNotFound {
-		return nil, errors.ErrNotExist
+	if errors.Is(err, storm.ErrNotFound) {
+		return nil, fbErrors.ErrNotExist
 	}
 
 	if err != nil {
@@ -58,7 +60,11 @@ func (st usersBackend) Update(user *users.User, fields ...string) error {
 	}
 
 	for _, field := range fields {
-		val := reflect.ValueOf(user).Elem().FieldByName(field).Interface()
+		userField := reflect.ValueOf(user).Elem().FieldByName(field)
+		if !userField.IsValid() {
+			return fmt.Errorf("invalid field: %s", field)
+		}
+		val := userField.Interface()
 		if err := st.db.UpdateField(user, field, val); err != nil {
 			return err
 		}
@@ -69,8 +75,8 @@ func (st usersBackend) Update(user *users.User, fields ...string) error {
 
 func (st usersBackend) Save(user *users.User) error {
 	err := st.db.Save(user)
-	if err == storm.ErrAlreadyExists {
-		return errors.ErrExist
+	if errors.Is(err, storm.ErrAlreadyExists) {
+		return fbErrors.ErrExist
 	}
 	return err
 }

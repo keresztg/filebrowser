@@ -1,6 +1,7 @@
 {
   "buttons": {
     "cancel": "취소",
+    "clear": "지우기",
     "close": "닫기",
     "copy": "복사",
     "copyFile": "파일 복사",
@@ -46,7 +47,6 @@
   },
   "files": {
     "body": "본문",
-    "clear": "지우기",
     "closePreview": "미리보기 닫기",
     "files": "파일",
     "folders": "폴더",
@@ -75,29 +75,6 @@
     "f1": "정보",
     "f2": "파일 이름 변경",
     "help": "도움말"
-  },
-  "languages": {
-    "ar": "العربية",
-    "de": "Deutsch",
-    "en": "English",
-    "es": "Español",
-    "fr": "Français",
-    "is": "",
-    "it": "Italiano",
-    "ja": "日本語",
-    "ko": "한국어",
-    "nlBE": "",
-    "pl": "Polski",
-    "pt": "Português",
-    "ptBR": "Português (Brasil)",
-    "ro": "",
-    "ru": "Русский",
-    "sk": "Slovenčina",
-    "svSE": "",
-    "tr" : "Türkçe",
-    "ua": "Українська",
-    "zhCN": "中文 (简体)",
-    "zhTW": "中文 (繁體)"
   },
   "login": {
     "createAnAccount": "계정 생성",
@@ -176,6 +153,7 @@
     "customStylesheet": "커스텀 스타일시트",
     "defaultUserDescription": "아래 사항은 신규 사용자들에 대한 기본 설정입니다.",
     "disableExternalLinks": "외부 링크 감추기",
+    "disableUsedDiskPercentage": "Disable used disk percentage graph",
     "documentation": "문서",
     "examples": "예",
     "executeOnShell": "쉘에서 실행",

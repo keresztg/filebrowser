@@ -1,6 +1,7 @@
 {
   "buttons": {
     "cancel": "Отмена",
+    "clear": "Очистить",
     "close": "Закрыть",
     "copy": "Копировать",
     "copyFile": "Скопировать файл",
@@ -51,7 +52,6 @@
   },
   "files": {
     "body": "Тело",
-    "clear": "Очистить",
     "closePreview": "Закрыть",
     "files": "Файлы",
     "folders": "Папки",
@@ -81,29 +81,6 @@
     "f1": "помощь",
     "f2": "переименовать файл",
     "help": "Помощь"
-  },
-  "languages": {
-    "ar": "العربية",
-    "de": "Deutsch",
-    "en": "English",
-    "es": "Español",
-    "fr": "Français",
-    "is": "Icelandic",
-    "it": "Italiano",
-    "ja": "日本語",
-    "ko": "한국어",
-    "nlBE": "Dutch (Belgium)",
-    "pl": "Polski",
-    "pt": "Português",
-    "ptBR": "Português (Brasil)",
-    "ro": "Romanian",
-    "ru": "Русский",
-    "sk": "Slovenčina",
-    "svSE": "Swedish (Sweden)",
-    "tr" : "Türkçe",
-    "ua": "Українська",
-    "zhCN": "中文 (简体)",
-    "zhTW": "中文 (繁體)"
   },
   "login": {
     "createAnAccount": "Создать аккаунт",
@@ -184,6 +161,7 @@
     "customStylesheet": "Свой стиль",
     "defaultUserDescription": "Это настройки по умолчанию для новых пользователей.",
     "disableExternalLinks": "Отключить внешние ссылки (кроме документации)",
+    "disableUsedDiskPercentage": "Disable used disk percentage graph",
     "documentation": "документация",
     "examples": "Примеры",
     "executeOnShell": "Выполнить в командной строке",

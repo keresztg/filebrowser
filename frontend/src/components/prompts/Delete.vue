@@ -1,7 +1,7 @@
 <template>
   <div class="card floating">
     <div class="card-content">
-      <p v-if="req.kind !== 'listing'">
+      <p v-if="!this.isListing || selectedCount === 1">
         {{ $t("prompts.deleteMessageSingle") }}
       </p>
       <p v-else>
@@ -10,18 +10,21 @@
     </div>
     <div class="card-action">
       <button
-        @click="$store.commit('closeHovers')"
+        @click="closeHovers"
         class="button button--flat button--grey"
         :aria-label="$t('buttons.cancel')"
         :title="$t('buttons.cancel')"
+        tabindex="2"
       >
         {{ $t("buttons.cancel") }}
       </button>
       <button
+        id="focus-prompt"
         @click="submit"
         class="button button--flat button--red"
         :aria-label="$t('buttons.delete')"
         :title="$t('buttons.delete')"
+        tabindex="1"
       >
         {{ $t("buttons.delete") }}
       </button>
@@ -30,27 +33,37 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapState } from "vuex";
+import { mapActions, mapState, mapWritableState } from "pinia";
 import { files as api } from "@/api";
 import buttons from "@/utils/buttons";
+import { useFileStore } from "@/stores/file";
+import { useLayoutStore } from "@/stores/layout";
 
 export default {
   name: "delete",
+  inject: ["$showError"],
   computed: {
-    ...mapGetters(["isListing", "selectedCount"]),
-    ...mapState(["req", "selected", "showConfirm"]),
+    ...mapState(useFileStore, [
+      "isListing",
+      "selectedCount",
+      "req",
+      "selected",
+      "currentPrompt",
+    ]),
+    ...mapWritableState(useFileStore, ["reload"]),
   },
   methods: {
-    ...mapMutations(["closeHovers"]),
+    ...mapActions(useLayoutStore, ["closeHovers"]),
     submit: async function () {
       buttons.loading("delete");
 
+      window.sessionStorage.setItem("modified", "true");
       try {
         if (!this.isListing) {
           await api.remove(this.$route.path);
           buttons.success("delete");
 
-          this.showConfirm();
+          this.currentPrompt?.confirm();
           this.closeHovers();
           return;
         }
@@ -68,11 +81,11 @@ export default {
 
         await Promise.all(promises);
         buttons.success("delete");
-        this.$store.commit("setReload", true);
+        this.reload = true;
       } catch (e) {
         buttons.done("delete");
         this.$showError(e);
-        if (this.isListing) this.$store.commit("setReload", true);
+        if (this.isListing) this.reload = true;
       }
     },
   },
